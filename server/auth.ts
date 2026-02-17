@@ -1,6 +1,6 @@
 import session from "express-session";
 import connectPg from "connect-pg-simple";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import type { Express, RequestHandler, Request, Response, NextFunction } from "express";
 import { db } from "./db";
 import { users } from "@shared/models/auth";
