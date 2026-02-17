@@ -9,17 +9,11 @@
 
 ## 1. Preparar os Arquivos
 
-### Baixar o código do Replit
-
-No Replit, clique nos três pontos (⋯) no menu de arquivos e selecione "Download as zip".
-
-Extraia o arquivo ZIP no seu computador.
-
-### Ou use Git (opcional)
+### Clonar do GitHub
 
 ```bash
-git clone <URL_DO_REPOSITÓRIO>
-cd <PASTA_DO_PROJETO>
+git clone https://github.com/renatovsantana/coroascanaa.git
+cd coroascanaa
 ```
 
 ## 2. Configurar o Banco de Dados
@@ -67,15 +61,17 @@ npm install
 ## 5. Configurar o Banco de Dados
 
 ```bash
-npm run db:push
+npx drizzle-kit push
 ```
 
 Isso criará todas as tabelas necessárias.
 
 ## 6. Compilar o Projeto
 
+**IMPORTANTE:** Use o script de build de produção (sem dependências do Replit):
+
 ```bash
-npm run build
+node script/build-production.mjs
 ```
 
 Isso gera:
@@ -85,13 +81,16 @@ Isso gera:
 ## 7. Iniciar o Servidor
 
 ```bash
-npm start
+NODE_ENV=production node dist/index.cjs
 ```
 
-Ou para rodar em background:
+Ou com PM2 (recomendado para produção):
 
 ```bash
-node dist/index.cjs
+npm install -g pm2
+NODE_ENV=production pm2 start dist/index.cjs --name coroascanaa
+pm2 save
+pm2 startup
 ```
 
 ## 8. Login Inicial
@@ -128,17 +127,30 @@ projeto/
 └── .env                 # Variáveis de ambiente
 ```
 
+## Configuração Hostinger Node.js Hosting
+
+Se estiver usando o **Node.js Hosting da Hostinger** (não VPS), configure:
+
+- **Comando de build:** `node script/build-production.mjs`
+- **Comando de start:** `NODE_ENV=production node dist/index.cjs`
+- **Versão do Node:** 20.x
+- **Diretório raiz:** `./`
+
 ## Comandos Úteis
 
 | Comando | Descrição |
 |---------|-----------|
 | `npm install` | Instalar dependências |
-| `npm run db:push` | Criar/atualizar tabelas do banco |
-| `npm run build` | Compilar para produção |
-| `npm start` | Iniciar servidor em produção |
-| `npm run dev` | Iniciar em modo desenvolvimento |
+| `npx drizzle-kit push` | Criar/atualizar tabelas do banco |
+| `node script/build-production.mjs` | Compilar para produção |
+| `NODE_ENV=production node dist/index.cjs` | Iniciar servidor em produção |
 
 ## Solução de Problemas
+
+### Falha na construção (Build failed)
+- Use `node script/build-production.mjs` em vez de `npm run build`
+- O comando `npm run build` usa plugins do Replit que não existem na Hostinger
+- Verifique se todas as dependências foram instaladas com `npm install`
 
 ### Erro de conexão com banco de dados
 - Verifique se o DATABASE_URL está correto
@@ -155,5 +167,12 @@ projeto/
 - Verifique se o caminho `/uploads` está acessível no servidor
 
 ### Login não funciona
-- Execute `npm run db:push` para garantir que as tabelas estão atualizadas
+- Execute `npx drizzle-kit push` para garantir que as tabelas estão atualizadas
 - Verifique se o SESSION_SECRET está configurado
+
+### Erro com bcrypt
+- Se `bcrypt` falhar na instalação, instale as ferramentas de compilação:
+  ```bash
+  sudo apt-get install build-essential python3
+  npm rebuild bcrypt
+  ```
