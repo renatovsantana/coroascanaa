@@ -9,6 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
 
 const allowlist = [
+  "bcryptjs",
   "connect-pg-simple",
   "date-fns",
   "drizzle-orm",
@@ -52,7 +53,6 @@ async function buildAll() {
     ...Object.keys(pkg.devDependencies || {}),
   ];
   const externals = allDeps.filter((dep) => !allowlist.includes(dep));
-  externals.push("bcrypt");
 
   await esbuild({
     entryPoints: [path.resolve(rootDir, "server/index.ts")],
